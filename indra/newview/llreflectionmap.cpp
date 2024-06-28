@@ -66,7 +66,7 @@ void LLReflectionMap::update(U32 resolution, U32 face, bool force_dynamic, F32 n
 
     F32 clip = (near_clip > 0) ? near_clip : getNearClip();
     
-    gViewerWindow->cubeSnapshot(LLVector3(mOrigin), mCubeArray, mCubeIndex, face, clip, getIsDynamic() || force_dynamic, useClipPlane, clipPlane);
+    gViewerWindow->cubeSnapshot(LLVector3(mOrigin), mCubeArray, mCubeIndex, face, clip, force_dynamic || getIsDynamic(), useClipPlane, clipPlane);
 }
 
 void LLReflectionMap::autoAdjustOrigin()
@@ -173,7 +173,9 @@ void LLReflectionMap::autoAdjustOrigin()
         mPriority = 1;
         mOrigin.load3(mViewerObject->getPositionAgent().mV);
 
-        if (mViewerObject->getVolume() && ((LLVOVolume*)mViewerObject)->getReflectionProbeIsBox())
+        if (mViewerObject->getVolume()
+            && mViewerObject->getPCode() == LL_PCODE_VOLUME
+            && ((LLVOVolume*)mViewerObject)->getReflectionProbeIsBox())
         {
             LLVector3 s = mViewerObject->getScale().scaledVec(LLVector3(0.5f, 0.5f, 0.5f));
             mRadius = s.magVec();
@@ -204,7 +206,7 @@ extern LLControlGroup gSavedSettings;
 F32 LLReflectionMap::getAmbiance()
 {
     F32 ret = 0.f;
-    if (mViewerObject && mViewerObject->getVolume())
+    if (mViewerObject && mViewerObject->getVolume() && mViewerObject->getPCode() == LL_PCODE_VOLUME)
     {
         ret = ((LLVOVolume*)mViewerObject)->getReflectionProbeAmbiance();
     }
@@ -218,7 +220,7 @@ F32 LLReflectionMap::getNearClip()
 
     F32 ret = 0.f;
 
-    if (mViewerObject && mViewerObject->getVolume())
+    if (mViewerObject && mViewerObject->getVolume() && mViewerObject->getPCode() == LL_PCODE_VOLUME)
     {
         ret = ((LLVOVolume*)mViewerObject)->getReflectionProbeNearClip();
     }
@@ -238,7 +240,8 @@ bool LLReflectionMap::getIsDynamic()
 {
     if (gSavedSettings.getS32("RenderReflectionProbeDetail") > (S32) LLReflectionMapManager::DetailLevel::STATIC_ONLY &&
         mViewerObject && 
-        mViewerObject->getVolume())
+        mViewerObject->getVolume() &&
+        mViewerObject->getPCode() == LL_PCODE_VOLUME)
     {
         return ((LLVOVolume*)mViewerObject)->getReflectionProbeIsDynamic();
     }
@@ -251,7 +254,7 @@ bool LLReflectionMap::getBox(LLMatrix4& box)
     if (mViewerObject)
     {
         LLVolume* volume = mViewerObject->getVolume();
-        if (volume)
+        if (volume && mViewerObject->getPCode() == LL_PCODE_VOLUME)
         {
             LLVOVolume* vobjp = (LLVOVolume*)mViewerObject;
 
