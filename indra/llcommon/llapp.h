@@ -202,6 +202,9 @@ public:
     static bool isExiting(); // Either quitting or error (app is exiting, cleanly or not)
     static int getPid();
 
+    static bool isFileReadOnlyMode();
+    static void setFileReadOnlyMode(bool mode);
+
     //
     // Sleep for specified time while still running
     //
@@ -247,7 +250,7 @@ public:
      * DO NOT call this method if your application has specialized
      * error handling code.
      */
-    void setupErrorHandling(bool mSecondInstance=false);
+    void setupErrorHandling(bool second_instance = false);
 
     void setErrorHandler(LLAppErrorHandler handler);
     static void runErrorHandler(); // run shortly after we detect an error

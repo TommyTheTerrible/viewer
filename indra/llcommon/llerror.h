@@ -309,20 +309,17 @@ namespace LLError
     {
     public:
         typedef std::function<void(const std::string&, const std::string&)> Handler;
-        static void setHandler(const Handler&);
+        typedef std::function<bool(const std::string&, const std::string&)> ConfirmHandler;
+        static void setHandlers(const Handler&, const ConfirmHandler&);
         static void setOutOfMemoryStrings(const std::string& title, const std::string& message);
+        static void setOutOfDiskStrings(const std::string& title, const std::string& message, const std::string& question);
 
         // When viewer encounters bad alloc or can't access files try warning user about reasons
         static void showOutOfMemory();
+        static void showOutOfDisk();
         static void showMissingFiles();
         // Genering error
         static void show(const std::string&);
-
-    private:
-        // needs to be preallocated before viewer runs out of memory
-        static std::string sLocalizedOutOfMemoryTitle;
-        static std::string sLocalizedOutOfMemoryWarning;
-        static Handler sHandler;
     };
 }
 

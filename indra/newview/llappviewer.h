@@ -79,7 +79,7 @@ public:
      * The LLAppViewer singleton is created in main()/WinMain().
      * So don't use it in pre-entry (static initialization) code.
      */
-    static LLAppViewer* instance() {return sInstance; }
+    static LLAppViewer* instance() { return sInstance; }
 
     //
     // Main application logic

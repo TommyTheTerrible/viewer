@@ -28,6 +28,7 @@
 
 #include "linden_common.h"
 #include "llapr.h"
+#include "llapp.h"
 #include "llmutex.h"
 #include "apr_dso.h"
 
@@ -574,6 +575,9 @@ S32 LLAPRFile::readEx(const std::string& filename, void *buf, S32 offset, S32 nb
 S32 LLAPRFile::writeEx(const std::string& filename, const void *buf, S32 offset, S32 nbytes, LLVolatileAPRPool* pool)
 {
     LL_PROFILE_ZONE_SCOPED;
+    if (LLApp::isFileReadOnlyMode())
+        return 0;
+
     apr_int32_t flags = APR_CREATE|APR_WRITE|APR_BINARY;
     if (offset < 0)
     {
@@ -606,7 +610,11 @@ S32 LLAPRFile::writeEx(const std::string& filename, const void *buf, S32 offset,
         apr_status_t s = apr_file_write(file_handle, buf, &bytes_written);
         if (s != APR_SUCCESS)
         {
-            LL_WARNS("APR") << " Attempting to write filename: " << filename << LL_ENDL;
+            LL_WARNS("APR") << "Attempting to write filename: " << filename << LL_ENDL;
+            if (APR_STATUS_IS_ENOSPC(s))
+            {
+                LLError::LLUserWarningMsg::showOutOfDisk();
+            }
             ll_apr_warn_status(s);
             bytes_written = 0;
         }

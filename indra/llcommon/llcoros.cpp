@@ -297,7 +297,11 @@ std::string LLCoros::launch(const std::string& prefix, const callable_t& callabl
         // Out of memory on stack allocation?
         LLError::LLUserWarningMsg::showOutOfMemory();
         printActiveCoroutines();
-        LL_ERRS("LLCoros") << "Bad memory allocation in LLCoros::launch(" << prefix << ")!" << LL_ENDL;
+        LL_WARNS("LLCoros") << "Bad memory allocation in LLCoros::launch(" << prefix << ")!" << LL_ENDL;
+        if (!LLApp::isStopped() && !LLApp::isExiting())
+        {
+            LLApp::setQuitting();
+        }
     }
 
     return name;

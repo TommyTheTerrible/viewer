@@ -2992,6 +2992,7 @@ If this message persists, restart your computer and try again.
 If it continues to persist, you may need to completely uninstall [APP_NAME] and reinstall it.
 	</string>
 	<string name="MBFatalError">Fatal Error</string>
+	<string name="MBConfirmation">Confirmation</string>
 	<string name="MBRequiresAltiVec"> [APP_NAME] requires a processor with AltiVec (G4 or later).</string>
 	<string name="MBAlreadyRunning">
 		[APP_NAME] is already running.
@@ -3039,6 +3040,9 @@ If you continue to receive this message, contact the [SUPPORT_SITE].
 
 If your computer's RAM is low, quit any heavy applications before runing Second Life, allocate a page file or reduce graphical settings like draw distance.
     </string>
+    <string name="MBOutOfDiskTitle">Out of Disk Free Space</string>
+    <string name="MBOutOfDiskMessage">[APP_NAME]'s request for file writing failed due to out of free space on the disk storage.</string>
+    <string name="MBOutOfDiskQuestion">Would you like to enter the filesystem readonly mode?</string>
     <string name="MBMissingFile">
         [APP_NAME] couldn't access or find some of the files it needs and will be closed.
 

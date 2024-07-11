@@ -97,6 +97,7 @@ bool LLApp::sLogInSignal = false;
 LLScalarCond<LLApp::EAppStatus> LLApp::sStatus{LLApp::APP_STATUS_STOPPED};
 LLAppErrorHandler LLApp::sErrorHandler = NULL;
 
+static bool gFileReadOnlyMode = false;
 
 LLApp::LLApp()
 {
@@ -485,6 +486,18 @@ int LLApp::getPid()
 #else
     return getpid();
 #endif
+}
+
+// static
+bool LLApp::isFileReadOnlyMode()
+{
+    return gFileReadOnlyMode;
+}
+
+// static
+void LLApp::setFileReadOnlyMode(bool mode)
+{
+    gFileReadOnlyMode = mode;
 }
 
 #ifndef LL_WINDOWS

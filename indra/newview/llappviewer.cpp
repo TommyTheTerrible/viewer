@@ -2267,6 +2267,15 @@ void errorMSG(const std::string& title_string, const std::string& message_string
     }
 }
 
+bool confirmMSG(const std::string& title_string, const std::string& message_string)
+{
+    if (message_string.empty())
+        return false;
+
+    S32 button = OSMessageBox(message_string, title_string.empty() ? LLTrans::getString("MBConfirmation") : title_string, OSMB_OKCANCEL)l
+    return button == OSBTN_OK;
+}
+
 void LLAppViewer::initLoggingAndGetLastDuration()
 {
     //
@@ -2278,7 +2287,7 @@ void LLAppViewer::initLoggingAndGetLastDuration()
     LLError::addGenericRecorder(&errorCallback);
     //LLError::setTimeFunction(getRuntime);
 
-    LLError::LLUserWarningMsg::setHandler(errorMSG);
+    LLError::LLUserWarningMsg::setHandlers(errorMSG, confirmMSG);
 
 
     if (mSecondInstance)
@@ -2977,6 +2986,7 @@ bool LLAppViewer::initConfiguration()
     }
 
     LLError::LLUserWarningMsg::setOutOfMemoryStrings(LLTrans::getString("MBOutOfMemoryTitle"), LLTrans::getString("MBOutOfMemoryErr"));
+    LLError::LLUserWarningMsg::setOutOfDiskStrings(LLTrans::getString("MBOutOfDiskTitle"), LLTrans::getString("MBOutOfDiskMessage"), LLTrans::getString("MBOutOfDiskQuestion"));
 
     return true; // Config was successful.
 }

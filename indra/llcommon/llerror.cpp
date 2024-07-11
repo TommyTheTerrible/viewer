@@ -1602,10 +1602,15 @@ namespace LLError
         return out << boost::stacktrace::stacktrace();
     }
 
-    // LLOutOfMemoryWarning
-    std::string LLUserWarningMsg::sLocalizedOutOfMemoryTitle;
-    std::string LLUserWarningMsg::sLocalizedOutOfMemoryWarning;
-    LLUserWarningMsg::Handler LLUserWarningMsg::sHandler;
+    // LLOutOfMemoryWarning, LLOutOfDiskWarning
+    // need to be preallocated before viewer runs out of memory/disk
+    static std::string sLocalizedOutOfMemoryTitle;
+    static std::string sLocalizedOutOfMemoryWarning;
+    static std::string sLocalizedOutOfDiskTitle;
+    static std::string sLocalizedOutOfDiskMessage;
+    static std::string sLocalizedOutOfDiskQuestion;
+    static LLUserWarningMsg::Handler sHandler;
+    static LLUserWarningMsg::ConfirmHandler sConfirmHandler;
 
     void LLUserWarningMsg::show(const std::string& message)
     {
@@ -1623,6 +1628,21 @@ namespace LLError
         }
     }
 
+    void LLUserWarningMsg::showOutOfDisk()
+    {
+        if (sConfirmHandler && !sLocalizedOutOfDiskTitle.empty())
+        {
+            if (LLApp::isFileReadOnlyMode())
+            {
+                sHandler(sLocalizedOutOfDiskTitle, sLocalizedOutOfDiskMessage);
+            }
+            else if (sConfirmHandler(sLocalizedOutOfDiskTitle, sLocalizedOutOfDiskMessage + "\n\n" + sLocalizedOutOfDiskQuestion))
+            {
+                LLApp::setFileReadOnlyMode(true);
+            }
+        }
+    }
+
     void LLUserWarningMsg::showMissingFiles()
     {
         // Files Are missing, likely can't localize.
@@ -1633,15 +1653,23 @@ namespace LLError
         sHandler("Missing Files", error_string);
     }
 
-    void LLUserWarningMsg::setHandler(const LLUserWarningMsg::Handler &handler)
+    void LLUserWarningMsg::setHandlers(const LLUserWarningMsg::Handler &handler, const ConfirmHandler& confirm)
     {
         sHandler = handler;
+        sConfirmHandler = confirm;
     }
 
     void LLUserWarningMsg::setOutOfMemoryStrings(const std::string& title, const std::string& message)
     {
         sLocalizedOutOfMemoryTitle = title;
         sLocalizedOutOfMemoryWarning = message;
+    }
+
+    void LLUserWarningMsg::setOutOfDiskStrings(const std::string& title, const std::string& message, const std::string& question)
+    {
+        sLocalizedOutOfDiskTitle = title;
+        sLocalizedOutOfDiskMessage = message;
+        sLocalizedOutOfDiskQuestion = question;
     }
 }
 
